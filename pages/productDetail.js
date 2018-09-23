@@ -12,10 +12,10 @@ import { buildImagePath } from '../client/services/helper';
 
 export default class productDetail extends React.Component {
   static async getInitialProps({ isServer, res, query }, token) {
-    if (!token) {
-      redirectToLogin(isServer, res);
-      return;
-    }
+    // if (!token) {
+    //   redirectToLogin(isServer, res);
+    //   return;
+    // }
     const { productId } = query;
     const productResponse = await getProductDetailApi(token, productId);
     const { data } = productResponse;
