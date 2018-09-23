@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const User = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   first_name: { type: String, required: true },

@@ -20,6 +20,8 @@ module.exports = class CacheRenderer {
   async cacheRender(req, res, pagePath, queryParams) {
     const key = getCacheKey(req);
 
+    console.log('params asli', queryParams, req.params);
+
     // If we have a page in the cache, let's serve it
     if (ssrCache.has(key)) {
       res.setHeader('x-cache', 'HIT');

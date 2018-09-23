@@ -7,11 +7,13 @@ export function buildResponse(response: Response) {
   return response.json();
 }
 
-export function buildPath(path) {
-  if (process.env.NODE_ENV !== 'production') {
-    return path;
-  }
-  return path;
+export function buildPath(path: string): string {
+  return `${process.env.API_HOST}${path}`;
+}
+
+export function buildImagePath(path: string): string {
+  if (!path) return '';
+  return `${process.env.API_HOST}/${path}`;
 }
 
 export function buildHeader(accessToken: string, useFormDataInstead: boolean) {

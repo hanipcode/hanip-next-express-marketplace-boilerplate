@@ -2,4 +2,6 @@
 // const withCSS = require('@zeit/next-css');
 const withSSSS = require('./nextSSSS');
 
-module.exports = withSSSS();
+module.exports = withSSSS({
+  useFileSystemPublicRoutes: false,
+});

@@ -4,13 +4,14 @@ import {
 } from './helper';
 import { EditPayload } from './Types/User';
 
-export function registerUser(firstName, lastName, phoneNumber, email, password) {
+export function registerUser(firstName, lastName, phoneNumber, email, password, locationName) {
   const payload = {
     first_name: firstName,
     last_name: lastName,
     email,
     phone_number: phoneNumber,
     password,
+    location_name: locationName,
   };
   return fetch(buildPath('/api/v1/user'), {
     method: 'POST',
@@ -56,6 +57,9 @@ export function editUser(editPayload: EditPayload, accessToken: string) {
   }
   if (editPayload.profilePicture) {
     formData.append('profile_picture', editPayload.profilePicture, editPayload.profilePicture.name);
+  }
+  if (editPayload.locationName) {
+    formData.append('location_name', editPayload.locationName);
   }
   return fetch(buildPath(`/api/v1/user/${editPayload.userId}`), {
     method: 'PUT',

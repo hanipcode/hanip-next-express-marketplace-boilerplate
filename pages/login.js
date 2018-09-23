@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Link from 'next/link';
 import Router from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
+import Cookies from 'js-cookie';
 import Navbar from '../layout/Navbar';
 import '../styles/login.scss';
 import { loginUser } from '../client/services/user';
@@ -53,6 +54,7 @@ class Login extends React.Component<LoginPageProps, LoginPageState> {
         return;
       }
       initLoginState(loginResponse.data.user, loginResponse.data.accessToken);
+      Cookies.set('token', loginResponse.data.accessToken);
       Router.push({ pathname: '/home' });
     });
   }
@@ -72,7 +74,7 @@ class Login extends React.Component<LoginPageProps, LoginPageState> {
     return (
       <div>
         <Navbar />
-        <article className="loginContent">
+        <article className="loginContent center-align">
           <div className="container">
             <form className="col s12" onSubmit={e => this.onSubmit(e)}>
               <div className="input-field col s12">

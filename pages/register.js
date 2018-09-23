@@ -2,6 +2,7 @@ import React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Router, { withRouter } from 'next/router';
 import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
 import Navbar from '../layout/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +11,6 @@ import '../styles/register.scss';
 import Loading from '../layout/Loading';
 import { registerUser, loginUser } from '../client/services/user';
 import { getUserDataState, getUserAccessTokenState, userLoginState } from '../client/ducks/user';
-
 
 interface RegisterProps {
   user: any;
@@ -26,6 +26,7 @@ type RegisterState = {
   password: string,
   passwordConfirmation: string,
   isLoading: boolean,
+  locationName: string,
 };
 
 class Register extends React.Component<RegisterProps, RegisterState> {
@@ -37,6 +38,7 @@ class Register extends React.Component<RegisterProps, RegisterState> {
       email: '',
       phoneNumber: '',
       password: '',
+      locationName: '',
       passwordConfirmation: '',
       isLoading: false,
     };
@@ -56,9 +58,9 @@ class Register extends React.Component<RegisterProps, RegisterState> {
 
     this.setState({ isLoading: true });
     const {
-      password, phoneNumber, firstName, lastName, email,
+      password, phoneNumber, firstName, lastName, email, locationName,
     } = this.state;
-    registerUser(firstName, lastName, phoneNumber, email, password).then((response) => {
+    registerUser(firstName, lastName, phoneNumber, email, password, locationName).then((response) => {
       this.setState({ isLoading: false });
       if (response.error) {
         toast(response.message, {
@@ -85,8 +87,9 @@ class Register extends React.Component<RegisterProps, RegisterState> {
           });
           return;
         }
-        Router.push({ pathname: '/home' });
         initLoginState(loginResponse.data.user, loginResponse.data.accessToken);
+        Cookies.set('token', loginResponse.data.accessToken);
+        Router.push({ pathname: '/home' });
       });
       // Loging in the user
     });
@@ -101,7 +104,13 @@ class Register extends React.Component<RegisterProps, RegisterState> {
 
   validateForm() {
     const {
-      password, passwordConfirmation, phoneNumber, firstName, lastName, email,
+      password,
+      passwordConfirmation,
+      phoneNumber,
+      firstName,
+      lastName,
+      email,
+      locationName,
     } = this.state;
     const validationError = { isError: false, message: '' };
     if (!firstName || !lastName) {
@@ -122,6 +131,11 @@ class Register extends React.Component<RegisterProps, RegisterState> {
     if (!password || !passwordConfirmation) {
       validationError.isError = true;
       validationError.message = 'Password tidak boleh kosong';
+      return validationError;
+    }
+    if (!locationName) {
+      validationError.isError = true;
+      validationError.message = 'Alamat tidak boleh kosong';
       return validationError;
     }
     if (password.length < 8) {
@@ -146,6 +160,7 @@ class Register extends React.Component<RegisterProps, RegisterState> {
       password,
       passwordConfirmation,
       isLoading,
+      locationName,
     } = this.state;
     return (
       <div>
@@ -185,6 +200,16 @@ class Register extends React.Component<RegisterProps, RegisterState> {
                 className="validate"
               />
               <label htmlFor="email">Email</label>
+            </div>
+            <div className="col s12 input-field">
+              <input
+                onChange={e => this.setState({ locationName: e.target.value })}
+                value={locationName}
+                id="address"
+                type="text"
+                className="validate"
+              />
+              <label htmlFor="address">Alamat</label>
             </div>
             <div className="col s12 input-field">
               <input
@@ -242,7 +267,9 @@ const mapDispatchToProps = dispatch => ({
   initLoginState: (user, accessToken) => dispatch(userLoginState(user, accessToken)),
 });
 
-export default withRouter(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Register));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(Register),
+);

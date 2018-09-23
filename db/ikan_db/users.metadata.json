@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"ikan_db.users"},{"v":2,"unique":true,"key":{"email":1},"name":"email_1","ns":"ikan_db.users","background":true}],"uuid":"75ccc24d5c2b475d93d7fb4200c61cc0"}

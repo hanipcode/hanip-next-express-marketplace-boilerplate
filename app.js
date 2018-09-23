@@ -52,10 +52,14 @@ app.prepare().then(() => {
   });
 
   // next js routing
+  server.get('/', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/home', req.query));
   server.get('/login', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/login', req.query));
   server.get('/register', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/register', req.query));
   server.get('/home', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/home', req.query));
   server.get('/profile', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/profile', req.query));
   server.get('/profile/edit', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/editProfile', req.query));
+  server.get('/product', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/myProduct', req.query));
+  server.get('/product/detail/:productId', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/productDetail', Object.assign(req.params, req.query)));
+  server.get('/product/add', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/createProduct', req.query));
   server.get('*', (req, res) => handle(req, res));
 });

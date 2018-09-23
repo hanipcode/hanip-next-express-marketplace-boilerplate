@@ -7,11 +7,8 @@ import { getUserAccessTokenState } from '../client/ducks/user';
 /* eslint-disable */
 class Index extends React.Component {
   constructor(props) {
-    if (props.accessToken) {
-      Router.replace('/home');
-    } else {
-      Router.replace('/login');
-    }
+    super(props);
+    Router.replace('/home');
   }
   render() {
     return <Loading isVisible />;

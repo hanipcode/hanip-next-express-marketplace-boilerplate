@@ -20,14 +20,15 @@ type EditProfileState = {
   phoneNumber: string,
   password: string,
   passwordConfirmation: string,
+  locationName: string,
   profilePicture: File,
   isLoading: boolean,
 };
 
 interface EditProfileProps {
-  user: UserReturnType,
-  accessToken: string,
-  initEditProfileState: (userData: any) => any,
+  user: UserReturnType;
+  accessToken: string;
+  initEditProfileState: (userData: any) => any;
 }
 
 class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
@@ -40,13 +41,31 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
     this.state = {
       password: '',
       passwordConfirmation: '',
-      phoneNumber: props.user.phone_number,
-      firstName: props.user.first_name,
-      lastName: props.user.last_name,
+      phoneNumber: '',
+      firstName: '',
+      lastName: '',
       profilePicture: null,
-      email: props.user.email,
+      email: '',
+      locationName: '',
       isLoading: false,
     };
+  }
+
+  componentDidMount() {
+    const {
+      user,
+    } = this.props;
+    this.setState({
+      password: '',
+      passwordConfirmation: '',
+      phoneNumber: user.phone_number,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      profilePicture: null,
+      email: user.email,
+      locationName: user.location_name,
+      isLoading: false,
+    });
   }
 
   onSubmit(e) {
@@ -63,7 +82,13 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
     }
     this.setState({ isLoading: true });
     const {
-      password, phoneNumber, firstName, lastName, email, profilePicture,
+      password,
+      phoneNumber,
+      firstName,
+      lastName,
+      email,
+      profilePicture,
+      locationName,
     } = this.state;
     const { user, accessToken, initEditProfileState } = this.props;
     const payload: EditPayload = {
@@ -74,6 +99,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
       password,
       phoneNumber,
       profilePicture,
+      locationName,
     };
     editUser(payload, accessToken)
       .then((response) => {
@@ -92,7 +118,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
           type: 'success',
           hideProgressBar: true,
         });
-        Router.replace('/profile')
+        Router.replace('/profile');
       })
       .catch((error) => {
         console.log(error);
@@ -101,7 +127,9 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
   }
 
   validateForm() {
-    const { password, passwordConfirmation, profilePicture } = this.state;
+    const {
+      password, passwordConfirmation, profilePicture, locationName,
+    } = this.state;
     const validationError = { isError: false, message: '' };
     if (password.length > 0) {
       if (password.length < 8) {
@@ -115,6 +143,11 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
         return validationError;
       }
     }
+    if (!locationName) {
+      validationError.isError = true;
+      validationError.message = 'Alamat tidak boleh kosong';
+      return validationError;
+    }
     if (profilePicture) {
       if (!MimeHelper.isImage(profilePicture.type)) {
         validationError.isError = true;
@@ -126,6 +159,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
   }
 
   render() {
+    const { token } = this.props;
     const {
       password,
       phoneNumber,
@@ -135,10 +169,11 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
       passwordConfirmation,
       isLoading,
       profilePicture,
+      locationName,
     } = this.state;
     return (
       <div>
-        <Navbar />
+        <Navbar isLoggedIn={token} />
         <div className="container">
           <h4 className="center-align">Edit Profil</h4>
 
@@ -184,6 +219,16 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 className="validate"
               />
               <label htmlFor="phone">Phone Number</label>
+            </div>
+            <div className="col s12 input-field">
+              <input
+                onChange={e => this.setState({ locationName: e.target.value })}
+                value={locationName}
+                id="address"
+                type="text"
+                className="validate"
+              />
+              <label htmlFor="address">Alamat</label>
             </div>
             <div className="col s12 input-field">
               <input
@@ -244,4 +289,7 @@ const mapDispatchToProps = dispatch => ({
   initEditProfileState: userData => dispatch(userEditState(userData)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditProfile);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(EditProfile);

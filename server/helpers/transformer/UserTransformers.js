@@ -7,8 +7,9 @@ const USER_INCLUDED_FIELD = [
   'first_name',
   'last_name',
   'phone_number',
-  'user_location_coordinate',
-  'user_location_name',
+  'location_coordinate',
+  'products',
+  'location_name',
   'profile_picture',
 ];
 

@@ -15,8 +15,18 @@ export default ({ onLogoutPress }: SidebarProps) => (
         </Link>
       </li>
       <li>
-        <Link href="/profile">
+        <Link href="/profile" prefetch>
           <a>Profile</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/createProduct" as="/product/add" prefetch>
+          <a>Tambah Produk</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/myProduct" as="/product" prefetch>
+          <a>Produk Saya</a>
         </Link>
       </li>
 

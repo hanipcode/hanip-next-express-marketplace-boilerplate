@@ -1,8 +1,6 @@
-// @flow
-const passport = require('passport');
 const express = require('express');
 const multer = require('multer');
-const bcrypt = require('bcrypt');
+const passportJWTCustomAuth = require('../helpers/passportJWTCustomAuth');
 
 const router = express.Router();
 const userController = require('../controllers/user');
@@ -26,23 +24,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-function passportJWTCustomAuth(req, res, next) {
-  return passport.authenticate('jwt', { session: false }, (err, user, info) => {
-    if (err) {
-      return res.status(401).json({
-        error: true,
-        message: 'Unauthorized',
-      });
-    }
-    if (!user) {
-      return res.status(401).json({
-        error: true,
-        message: 'Unauthorized',
-      });
-    }
-    next();
-  })(req, res, next);
-}
 /**
  * @swagger
  * tags:
@@ -84,13 +65,13 @@ function passportJWTCustomAuth(req, res, next) {
  *    in: formData
  *    description: phone number of the user
  *    type: string
- *  user_location_coordinate:
- *    name: user_location_coordinate
+ *  location_coordinate:
+ *    name: location_coordinate
  *    in: formData
  *    description: user coordinate string
  *    type: string
- *  user_location_name:
- *    name: user_location_name
+ *  location_name:
+ *    name: location_name
  *    in: formData
  *    description: user address
  *    type: string
@@ -155,9 +136,9 @@ function passportJWTCustomAuth(req, res, next) {
  */
 /**
  * @swagger
- * /api/v1/user:
+ * /user:
  *   post:
- *     description: Create new user
+ *     summary: Create new user (register)
  *     produces:
  *       - application/json
  *       - text/html
@@ -167,8 +148,9 @@ function passportJWTCustomAuth(req, res, next) {
  *       - $ref: '#/parameters/first_name'
  *       - $ref: '#/parameters/last_name'
  *       - $ref: '#/parameters/phone_number'
- *       - $ref: '#/parameters/user_location_coordinate'
- *       - $ref: '#/parameters/user_location_name'
+ *       - $ref: '#/parameters/location_coordinate'
+ *       - $ref: '#/parameters/location_name'
+ *       - $ref: '#/parameters/profile_picture_image'
  *     tags:
  *        - Users
  *     responses:
@@ -178,7 +160,7 @@ function passportJWTCustomAuth(req, res, next) {
  *           type: object
  *           $ref: '#/definitions/User'
  *   put:
- *     description: Edit user Profile
+ *     summary: Edit user Profile
  *     security:
  *       - Bearer: []
  *     produces:
@@ -191,8 +173,8 @@ function passportJWTCustomAuth(req, res, next) {
  *       - $ref: '#/parameters/first_name'
  *       - $ref: '#/parameters/last_name'
  *       - $ref: '#/parameters/phone_number'
- *       - $ref: '#/parameters/user_location_coordinate'
- *       - $ref: '#/parameters/user_location_name'
+ *       - $ref: '#/parameters/location_coordinate'
+ *       - $ref: '#/parameters/location_name'
  *       - $ref: '#/parameters/profile_picture_image'
  *     tags:
  *        - Users
@@ -203,16 +185,16 @@ function passportJWTCustomAuth(req, res, next) {
  *           type: object
  *           $ref: '#/definitions/User'
  */
-router.route('').post(userController.createUser);
+router.route('').post(upload.single('profile_picture'), userController.createUser);
 router
   .route('')
   .put(passportJWTCustomAuth, upload.single('profile_picture'), userController.editUser);
 
 /**
  * @swagger
- * /api/v1/user/auth:
+ * /user/auth:
  *   post:
- *     description: Create new user
+ *     summary: User Login
  *     produces:
  *       - application/json
  *       - text/html
@@ -232,11 +214,11 @@ router.route('/auth').post(userController.loginUser);
 
 /**
  * @swagger
- * /api/v1/user/{userId}:
+ * /user/{userId}:
  *   get:
  *     security:
  *       - Bearer: []
- *     description: Get specific user by user id
+ *     summary: Get specific user by user id
  *     produces:
  *       - application/json
  *     parameters:
@@ -252,7 +234,7 @@ router.route('/auth').post(userController.loginUser);
  *   put:
  *     security:
  *       - Bearer: []
- *     description: edit specific user by user id
+ *     summary: edit specific user by user id
  *     produces:
  *       - application/jsom
  *     parameters:
@@ -262,8 +244,8 @@ router.route('/auth').post(userController.loginUser);
  *     - $ref: '#/parameters/first_name'
  *     - $ref: '#/parameters/last_name'
  *     - $ref: '#/parameters/phone_number'
- *     - $ref: '#/parameters/user_location_coordinate'
- *     - $ref: '#/parameters/user_location_name'
+ *     - $ref: '#/parameters/location_coordinate'
+ *     - $ref: '#/parameters/location_name'
  *     - $ref: '#/parameters/profile_picture_image'
  *     tags:
  *       - Users

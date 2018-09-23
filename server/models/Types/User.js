@@ -1,3 +1,5 @@
+import { ProductFlowType } from './Product';
+
 export type UserModelType = {
   _id: string,
   email: string,
@@ -6,6 +8,7 @@ export type UserModelType = {
   last_name: string,
   phone_number: string,
   profile_picture: string,
+  products: ProductFlowType[],
   user_location_coordinate?: string,
   user_location_name?: string,
 };

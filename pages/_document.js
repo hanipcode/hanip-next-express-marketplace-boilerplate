@@ -33,9 +33,14 @@ export default class MyDocument extends Document {
             <Helmet>
               <script>
                 {`
-        $(document).ready(function() {
-          M.AutoInit();
-      `}
+                  $(document).ready(function() {
+
+                    M.AutoInit();
+
+                    var elems = document.querySelectorAll('select');
+                    var instances = M.FormSelect.init(elems);
+                  });
+                `}
               </script>
             </Helmet>
           </body>

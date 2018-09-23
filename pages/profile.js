@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Navbar from '../layout/Navbar';
 // $FlowFixMe
 import '../styles/profile.scss';
-import { DEFAULT_HEADER } from '../client/services/helper';
+import { DEFAULT_HEADER, buildImagePath } from '../client/services/helper';
 import { getUserAccessTokenState, getUserDataState } from '../client/ducks/user';
 import Loading from '../layout/Loading';
 import WithProgress from '../layout/WithProgress';
@@ -33,7 +33,7 @@ class Profile extends React.Component<null, ProfileState> {
       profilePicture: props.user.profile_picture,
       email: props.user.email,
       phoneNumber: props.user.phone_number,
-      address: props.user.address || 'Anda Belum Memasukan Alamat',
+      address: props.user.location_name || 'Anda Belum Memasukan Alamat',
       isLoading: true,
     };
   }
@@ -48,6 +48,7 @@ class Profile extends React.Component<null, ProfileState> {
   }
 
   render() {
+    const { token } = this.props;
     const {
       firstName,
       lastName,
@@ -62,12 +63,16 @@ class Profile extends React.Component<null, ProfileState> {
       <div>
         <Navbar
           rightIconName="edit_mode"
-          onRightIconClick={() => Router.push('/profile/edit')}
+          onRightIconClick={() => Router.push('/editProfile', '/profile/edit')}
+          isLoggedIn={token}
           withRightIcon
         />
         <WithProgress />
         <div className="container center-align profile-container">
-          <img className="center-align profile-picture margin-center" src={profilePicture} />
+          <img
+            className="center-align profile-picture margin-center"
+            src={buildImagePath(profilePicture)}
+          />
           <p className="text-username">
             <span>{`${firstName} ${lastName}`}</span>
           </p>

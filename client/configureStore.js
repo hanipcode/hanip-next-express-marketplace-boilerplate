@@ -1,9 +1,10 @@
 import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 import { applyMiddleware, createStore } from 'redux';
 
 import reducers from './ducks';
 
-const makeConfiguredStore = (reducers, initialState) => createStore(reducers, initialState, applyMiddleware(logger));
+const makeConfiguredStore = (reducers, initialState) => createStore(reducers, initialState, applyMiddleware(logger, thunk));
 
 export default (initialState, {
   isServer, req, debug, storeKey,

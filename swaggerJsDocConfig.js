@@ -5,7 +5,9 @@ const options = {
     info: {
       title: 'Api Dokumen', // Title (required)
       version: '1.0.0', // Version (required)
+      description: 'Api yang digunakan untuk pasar ikan app',
     },
+    basePath: '/api/v1',
   },
   apis: ['./server/routes/*'],
 };
