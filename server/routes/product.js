@@ -214,6 +214,6 @@ router
   .route('/:productId')
   .put(upload.single('image'), passportJWTCustomAuth, productController.editProductPath);
 router.route('/:productId').delete(passportJWTCustomAuth, productController.deleteProductPath);
-router.route('/:productId').get(passportJWTCustomAuth, productController.getProductDetailById);
+router.route('/:productId').get(productController.getProductDetailById);
 
 module.exports = router;
