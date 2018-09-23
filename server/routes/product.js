@@ -170,8 +170,6 @@ router.route('/user/:userId').get(passportJWTCustomAuth, productController.getPr
  *      - Product
  *    parameters:
  *      - $ref: '#/parameters/productId'
- *    security:
- *      - Bearer: []
  *    responses:
  *      200:
  *        description: Successfully get detail of product
