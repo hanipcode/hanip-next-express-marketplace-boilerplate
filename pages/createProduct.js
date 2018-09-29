@@ -247,7 +247,7 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchProductType: token => dispatch(fetchProductTypeState(token)),
+  // fetchProductType: token => dispatch(fetchProductTypeState(token)),
 });
 
 const mapStateToProps = state => ({
