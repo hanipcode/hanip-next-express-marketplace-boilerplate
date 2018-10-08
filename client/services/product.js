@@ -8,6 +8,8 @@ export function createProductApi(
   typeId: string,
   name: string,
   price: number,
+  priceUnitName: string,
+  stockUnitName: string,
   stock: number,
   description: string,
   productImage: File,
@@ -16,6 +18,8 @@ export function createProductApi(
   formData.append('type_id', typeId);
   formData.append('name', name);
   formData.append('price', price);
+  formData.append('price_unit_name', priceUnitName);
+  formData.append('stock_unit_name', stockUnitName);
   formData.append('stock', stock);
   formData.append('description', description);
   formData.append('image', productImage, productImage.name);

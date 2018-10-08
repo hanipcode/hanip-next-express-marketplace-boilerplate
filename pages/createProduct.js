@@ -8,14 +8,20 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from '../layout/Navbar';
 import '../styles/common.scss';
-import { fetchProductTypeState, getProductTypeListState } from '../client/ducks/productType';
+import {
+  fetchProductTypeState,
+  getProductTypeListState,
+  getProductTypeLoadingState,
+} from '../client/ducks/productType';
 import redirectToLogin from '../client/helpers/redirectToLogin';
 import MimeHelper from '../client/helpers/mime';
 import { createProductApi } from '../client/services/product';
+import Loading from '../layout/Loading';
 
 type CreateProductProps = {
   token: String,
   productTypeList: Array,
+  productTypeLoading: boolean,
   fetchProductType(token: String): void,
 };
 
@@ -23,7 +29,9 @@ type CreateProductState = {
   productName: string,
   productTypeId: string,
   productStock: number,
+  productStockUnitName: string,
   productPrice: number,
+  productPriceUnitName: string,
   productImage: File,
   productDescription: string,
 };
@@ -45,6 +53,8 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
       productName: '',
       productTypeId: '',
       productStock: null,
+      productStockUnitName: '',
+      productPriceUnitName: '',
       productPrice: null,
       productImage: null,
       productDescription: '',
@@ -73,6 +83,8 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
       productImage,
       productName,
       productPrice,
+      productPriceUnitName,
+      productStockUnitName,
       productStock,
       productTypeId,
     } = this.state;
@@ -81,6 +93,8 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
       productTypeId,
       productName,
       productPrice,
+      productPriceUnitName,
+      productStockUnitName,
       productStock,
       productDescription,
       productImage,
@@ -121,13 +135,18 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
   }
 
   render() {
-    const { productTypeList, token } = this.props;
+    const { productTypeList, token, productTypeLoading } = this.props;
+    if (productTypeLoading) {
+      return <Loading isVisible />;
+    }
     const {
       productDescription,
       productImage,
       productName,
       productPrice,
       productStock,
+      productPriceUnitName,
+      productStockUnitName,
       productTypeId,
     } = this.state;
     return (
@@ -169,7 +188,7 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
             </div>
           </div>
           <div className="row">
-            <div className="input-field col s12">
+            <div className="input-field col s7">
               <i className="material-icons prefix">grain</i>
               <input
                 type="number"
@@ -181,32 +200,56 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
               <label htmlFor="jumlah_produk">Stok Produk</label>
               <span className="helper-text">Jumlah produk yang tersedia</span>
             </div>
-            <div className="row">
-              <div className="input-field col s12">
-                <i className="material-icons prefix">business_center</i>
-                <input
-                  type="number"
-                  className="validate"
-                  id="harga_produk"
-                  value={productPrice}
-                  onChange={e => this.setState({ productPrice: e.currentTarget.value })}
-                />
-                <span className="helper-text">Harga per Item / Ekor</span>
-              </div>
+            <div className="input-field col s5">
+              <input
+                type="text"
+                className="validate"
+                id="jenis_jumlah_produk"
+                placeholder="Kg/Ekor/Ons"
+                value={productStockUnitName}
+                onChange={e => this.setState({ productStockUnitName: e.currentTarget.value })}
+              />
+              <label htmlFor="jenis_jumlah_produk">Jenis Satuan</label>
+              <span className="helper-text">Jenis Satuan Produk</span>
             </div>
-            <div className="row">
-              <div className="file-field input-field col s12">
-                <div className="btn">
-                  <span>File</span>
-                  <input
-                    type="file"
-                    onChange={e => this.setState({ productImage: e.currentTarget.files[0] })}
-                  />
-                </div>
-                <div className="file-path-wrapper">
-                  <input className="file-path validate" type="text" id="gambar_produk" />
-                  <label htmlFor="gambar_produk">Gambar Produk</label>
-                </div>
+          </div>
+          <div className="row">
+            <div className="input-field col s7">
+              <i className="material-icons prefix">business_center</i>
+              <input
+                type="number"
+                className="validate"
+                id="harga_produk"
+                value={productPrice}
+                onChange={e => this.setState({ productPrice: e.currentTarget.value })}
+              />
+              <span className="helper-text">Harga per Item / Ekor</span>
+            </div>
+            <div className="input-field col s5">
+              <input
+                type="text"
+                className="validate"
+                id="jenis_harga_produk"
+                placeholder="Kg/Ekor/Ons"
+                value={productPriceUnitName}
+                onChange={e => this.setState({ productPriceUnitName: e.currentTarget.value })}
+              />
+              <label htmlFor="jenis_harga_produk">Per</label>
+              <span className="helper-text">Jenis Satuan Harga</span>
+            </div>
+          </div>
+          <div className="row">
+            <div className="file-field input-field col s12">
+              <div className="btn">
+                <span>File</span>
+                <input
+                  type="file"
+                  onChange={e => this.setState({ productImage: e.currentTarget.files[0] })}
+                />
+              </div>
+              <div className="file-path-wrapper">
+                <input className="file-path validate" type="text" id="gambar_produk" />
+                <label htmlFor="gambar_produk">Gambar Produk</label>
               </div>
             </div>
           </div>
@@ -237,6 +280,7 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
               $(document).ready(function() {
                 var elems = document.querySelectorAll('select');
                 var instances = M.FormSelect.init(elems);
+                M.updateTextFields();
               });
               `}
           </script>
@@ -247,11 +291,12 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
 }
 
 const mapDispatchToProps = dispatch => ({
-  // fetchProductType: token => dispatch(fetchProductTypeState(token)),
+  fetchProductType: token => dispatch(fetchProductTypeState(token)),
 });
 
 const mapStateToProps = state => ({
   productTypeList: getProductTypeListState(state.productTypeState),
+  productTypeLoading: getProductTypeLoadingState(state.productTypeState),
 });
 
 export default connect(

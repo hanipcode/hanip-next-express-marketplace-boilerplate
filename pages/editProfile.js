@@ -2,6 +2,7 @@ import React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
 import Router from 'next/router';
+import {Helmet} from 'react-helmet';
 import Navbar from '../layout/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -182,6 +183,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
               <div className="col s6 input-field">
                 <input
                   value={firstName}
+                  placeholder="Nama Depan"
                   onChange={e => this.setState({ firstName: e.target.value })}
                   id="first_name"
                   type="text"
@@ -193,6 +195,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 <input
                   onChange={e => this.setState({ lastName: e.target.value })}
                   value={lastName}
+                  placeholder="Nama belakang"
                   id="last_name"
                   type="text"
                   className="validate"
@@ -206,6 +209,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 value={email}
                 id="email"
                 type="email"
+                placeholder="Email"
                 className="validate"
               />
               <label htmlFor="email">Email</label>
@@ -216,6 +220,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 value={phoneNumber}
                 id="phone"
                 type="tel"
+                placeholder="Nomor Telepon"
                 className="validate"
               />
               <label htmlFor="phone">Phone Number</label>
@@ -226,6 +231,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 value={locationName}
                 id="address"
                 type="text"
+                placeholder="Alamat"
                 className="validate"
               />
               <label htmlFor="address">Alamat</label>
@@ -236,6 +242,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 value={password}
                 id="password"
                 type="password"
+                placeholder="Password"
                 className="validate"
               />
               <label htmlFor="password">Password</label>
@@ -245,6 +252,7 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
                 value={passwordConfirmation}
                 id="confirmPassword"
                 type="password"
+                placeholder="Konfirmasi Password"
                 onChange={e => this.setState({ passwordConfirmation: e.target.value })}
                 className="validate"
               />
@@ -275,6 +283,16 @@ class EditProfile extends React.Component<EditProfileProps, EditProfileState> {
         </div>
         <ToastContainer />
         <Loading isVisible={isLoading} />
+        <Helmet>
+          <script>
+            {`
+              $(document).ready(function() {
+                var elems = document.querySelectorAll('select');
+                M.updateTextFields();
+              });
+              `}
+          </script>
+        </Helmet>
       </div>
     );
   }

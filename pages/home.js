@@ -11,6 +11,7 @@ import redirectToLogin from '../client/helpers/redirectToLogin';
 import { getAllProductApi } from '../client/services/product';
 
 import '../styles/common.scss';
+import '../styles/product_card.scss';
 
 type HomeState = {
   isLoading: boolean,
@@ -100,29 +101,28 @@ class Home extends React.Component<null, HomeState> {
           </div>
           {productList.map(productData => (
             <div className="col s6 mt3">
-              <div className="card">
-                <div className="card-image ">
-                  <img className="responsive-img product-thumbnail" src={productData.image} />
+              <Link
+                href={{ pathname: '/productDetail', query: { productId: productData._id } }}
+                as={`/product/detail/${productData._id}`}
+                prefetch
+              >
+                <div className="card s12 m0 p0">
+                  <div className="product_card-image-container ">
+                    <img className="product_card-thumbnail" src={productData.image} />
+                  </div>
+                  <div className="product_card-content">
+                    <p className="product_card-text product_card-title">
+                      <span>{productData.name}</span>
+                    </p>
+                    <p className="product_card-text product_card-price mb4">
+                      {accounting.formatMoney(productData.price, 'Rp ', 2, '.', ',')}/{productData.price_unit_name}
+                    </p>
+                    <p className="product_card-text product_card-owner">
+                      <span>{`${productData.user.first_name} ${productData.user.last_name}`}</span>
+                    </p>
+                  </div>
                 </div>
-                <div className="card-content">
-                  <p>
-                    <span className="card-title">{productData.name}</span>
-                  </p>
-                  <p>
-                    <span>{`${productData.user.first_name} ${productData.user.last_name}`}</span>
-                  </p>
-                  <h6 className="mb4">
-                    {accounting.formatMoney(productData.price, 'Rp ', 2, '.', ',')}
-                  </h6>
-                  <Link
-                    href={{ pathname: '/productDetail', query: { productId: productData._id } }}
-                    as={`/product/detail/${productData._id}`}
-                    prefetch
-                  >
-                    <a className="blue-text">Lihat Produk</a>
-                  </Link>
-                </div>
-              </div>
+              </Link>
             </div>
           ))}
         </div>

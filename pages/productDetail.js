@@ -74,7 +74,7 @@ export default class productDetail extends React.Component {
                 backdropClosesModal
               />
               <h4>{productInfo.name}</h4>
-              <h6>{accounting.formatMoney(productInfo.price, 'Rp ', 2, '.', ',')}</h6>
+              <h6>{accounting.formatMoney(productInfo.price, 'Rp ', 2, '.', ',')} per {productInfo.price_unit_name}</h6>
               <h6 className="mt4">Deskripsi Produk</h6>
               <p className="row">
                 <span className="col">{productInfo.description}</span>
@@ -85,7 +85,7 @@ export default class productDetail extends React.Component {
               </p>
               <h6>Stok Produk</h6>
               <p className="row">
-                <span className="col">{productInfo.stock}</span>
+                <span className="col">{productInfo.stock} {productInfo.stock_unit_name}</span>
               </p>
               <h6>Informasi Penjual</h6>
               <p className="row">

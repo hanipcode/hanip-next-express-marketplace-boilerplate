@@ -49,6 +49,16 @@ const upload = multer({ storage });
  *    in: formData
  *    description: product price
  *    type: number
+ *  productPriceUnitName:
+ *    name: price_unit_name
+ *    in: formData
+ *    description: name of unit product
+ *    type: string
+ *  productStockUnitName:
+ *    name: stock_unit_name
+ *    in: formData
+ *    description: name of stock product
+ *    type: string
  *  productStock:
  *    name: stock
  *    in: formData

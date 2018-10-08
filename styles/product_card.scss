@@ -1,0 +1,34 @@
+@import '_colors';
+
+.product_card-text {
+  margin: 0;
+  padding: 0;
+}
+.product_card-title {
+  font-size: 1.05rem;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.product_card-content {
+  padding: 1rem;
+}
+
+.product_card-price {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: color('red', 'lighten-1');
+}
+
+.product_card-owner {
+  font-size: 0.8rem;
+}
+
+.product_card-image-container {
+  height: 140px;
+}
+.product_card-thumbnail {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
