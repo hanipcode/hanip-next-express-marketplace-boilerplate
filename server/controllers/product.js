@@ -15,7 +15,7 @@ async function createProduct(req: Request, res: Response) {
   const jwtPayload = jwt.verify(token, process.env.SECRET_KEY);
   const param: ProductCreateParam = req.body;
   const user = await User.findById(jwtPayload._id);
-  const { file } = req;
+  const { files } = req;
 
   if (!user) {
     res.status(404).send({
@@ -39,20 +39,23 @@ async function createProduct(req: Request, res: Response) {
   };
 
   let finalPayload;
-  if (file) {
-    const thumbnailFile = await sharp(file.path)
-      .resize(200, null)
-      .flatten()
-      .toFile(path.join(`${__dirname}../../../static/public/product_thumbnail/${file.filename}`));
-    if (!thumbnailFile) {
-      res.send({
-        error: true,
-        message: 'Failed when upload your product picture',
-      });
-      return;
-    }
+  if (files) {
+    await files.forEach(async (file) => {
+      const thumbnailFile = await sharp(file.path)
+        .resize(200, null)
+        .flatten()
+        .toFile(path.join(`${__dirname}../../../static/public/product_thumbnail/${file.filename}`));
+      if (!thumbnailFile) {
+        res.send({
+          error: true,
+          message: 'Failed when upload your product picture',
+        });
+      }
+    });
+    const imageFiles = files.map(file => file.path.replace('static/', '').replace('/product_images/', '/product_thumbnail/'));
+    console.log(imageFiles);
     finalPayload = Object.assign(productCreatePayload, {
-      image: file.path.replace('static/', '').replace('/product_images/', '/product_thumbnail/'),
+      image: imageFiles,
     });
   } else {
     finalPayload = productCreatePayload;
@@ -189,28 +192,31 @@ async function getProductByUserId(req: Request, res: Response) {
 async function editProductPath(req: Request, res: Response) {
   const { productId } = req.params;
   const param: ProductEditParam = req.body;
-  const { file } = req;
-  let finalPayload;
-  if (file) {
-    const thumbnailFile = await sharp(file.path)
-      .resize(200, null)
-      .flatten()
-      .toFile(path.join(`${__dirname}../../../static/public/product_thumbnail/${file.filename}`));
-    if (!thumbnailFile) {
-      res.send({
-        error: true,
-        message: 'Failed when upload your product picture',
-      });
-      return;
-    }
-    finalPayload = Object.assign(param, {
-      image: file.path.replace('static/', '').replace('/product_images/', '/product_thumbnail/'),
-    });
-  } else {
-    finalPayload = param;
-  }
+  // const { files } = req;
+  // let finalPayload;
+  //  if (files) {
+  //   await files.forEach(async (file) => {
+  //     const thumbnailFile = await sharp(file.path)
+  //       .resize(200, null)
+  //       .flatten()
+  //       .toFile(path.join(`${__dirname}../../../static/public/product_thumbnail/${file.filename}`));
+  //     if (!thumbnailFile) {
+  //       res.send({
+  //         error: true,
+  //         message: 'Failed when upload your product picture',
+  //       });
+  //     }
+  //   });
+  //   const imageFiles = files.map(file => file.path.replace('static/', '').replace('/product_images/', '/product_thumbnail/'));
+  //   console.log(imageFiles);
+  //   finalPayload = Object.assign(param, {
+  //     image: imageFiles,
+  //   });
+  // } else {
+  //   finalPayload = param;
+  // }
   try {
-    const savedProduct = await Product.findOneAndUpdate({ _id: productId }, finalPayload, {
+    const savedProduct = await Product.findOneAndUpdate({ _id: productId }, param, {
       new: true,
     });
     if (!savedProduct) {

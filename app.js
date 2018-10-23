@@ -61,5 +61,6 @@ app.prepare().then(() => {
   server.get('/product', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/myProduct', req.query));
   server.get('/product/detail/:productId', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/productDetail', Object.assign(req.params, req.query)));
   server.get('/product/add', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/createProduct', req.query));
+  server.get('/product/:productId/edit', (req: Request, res: Response) => cacheRenderer.cacheRender(req, res, '/editProduct', Object.assign(req.params, req.query)));
   server.get('*', (req, res) => handle(req, res));
 });

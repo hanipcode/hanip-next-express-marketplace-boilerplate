@@ -88,7 +88,10 @@ const upload = multer({ storage });
  *    name: image
  *    in: formData
  *    description: Image of the product
- *    type: file
+ *    type: array
+ *    items:
+ *      type: file
+ *    collectionFormat: multi
  */
 
 /**
@@ -108,6 +111,8 @@ const upload = multer({ storage });
  *      - $ref: '#/parameters/productLocationCoordinate'
  *      - $ref: '#/parameters/productLocationName'
  *      - $ref: '#/parameters/productImage'
+ *      - $ref: '#/parameters/productStockUnitName'
+ *      - $ref: '#/parameters/productPriceUnitName'
  *    tags:
  *      - Product
  *    security:
@@ -128,7 +133,7 @@ const upload = multer({ storage });
  */
 router
   .route('')
-  .post(upload.single('image'), passportJWTCustomAuth, productController.createProduct);
+  .post(upload.array('image', 12), passportJWTCustomAuth, productController.createProduct);
 router.route('').get(productController.getAllProduct);
 
 /**
@@ -220,7 +225,7 @@ router.route('/user/:userId').get(passportJWTCustomAuth, productController.getPr
  */
 router
   .route('/:productId')
-  .put(upload.single('image'), passportJWTCustomAuth, productController.editProductPath);
+  .put(upload.array('image'), passportJWTCustomAuth, productController.editProductPath);
 router.route('/:productId').delete(passportJWTCustomAuth, productController.deleteProductPath);
 router.route('/:productId').get(productController.getProductDetailById);
 

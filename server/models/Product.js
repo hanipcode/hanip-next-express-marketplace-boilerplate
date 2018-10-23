@@ -4,7 +4,7 @@ const Product = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductType', required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: { type: String, required: true },
+  image: [{ type: String, required: true }],
   name: { type: String, required: true },
   price: { type: String, required: true },
   price_unit_name: { type: String, required: true },

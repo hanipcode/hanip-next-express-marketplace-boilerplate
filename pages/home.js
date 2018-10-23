@@ -108,7 +108,7 @@ class Home extends React.Component<null, HomeState> {
               >
                 <div className="card s12 m0 p0">
                   <div className="product_card-image-container ">
-                    <img className="product_card-thumbnail" src={productData.image} />
+                    <img className="product_card-thumbnail" src={productData.image[0]} />
                   </div>
                   <div className="product_card-content">
                     <p className="product_card-text product_card-title">

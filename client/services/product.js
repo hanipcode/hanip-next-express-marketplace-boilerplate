@@ -12,7 +12,7 @@ export function createProductApi(
   stockUnitName: string,
   stock: number,
   description: string,
-  productImage: File,
+  productImage: File[],
 ) {
   const formData = new FormData();
   formData.append('type_id', typeId);
@@ -22,9 +22,35 @@ export function createProductApi(
   formData.append('stock_unit_name', stockUnitName);
   formData.append('stock', stock);
   formData.append('description', description);
-  formData.append('image', productImage, productImage.name);
+  productImage.forEach((imageData) => {
+    formData.append('image', imageData, imageData.name);
+  });
   return fetch(buildPath('/api/v1/product'), {
     method: 'POST',
+    body: formData,
+    headers: buildHeader(accessToken, true),
+  }).then(buildResponse);
+}
+
+export function editProductApi(
+  accessToken: string,
+  productId,
+  name: string,
+  price: number,
+  priceUnitName: string,
+  stockUnitName: string,
+  stock: number,
+  description: string,
+) {
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('price', price);
+  formData.append('price_unit_name', priceUnitName);
+  formData.append('stock_unit_name', stockUnitName);
+  formData.append('stock', stock);
+  formData.append('description', description);
+  return fetch(buildPath(`/api/v1/product/${productId}`), {
+    method: 'PUT',
     body: formData,
     headers: buildHeader(accessToken, true),
   }).then(buildResponse);

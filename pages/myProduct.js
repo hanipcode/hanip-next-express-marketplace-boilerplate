@@ -111,7 +111,7 @@ export default class MyProduct extends React.Component<MyProductProps, MyProduct
                 <div className="card-image ">
                   <img
                     className="responsive-img product-image"
-                    src={buildImagePath(productData.image)}
+                    src={buildImagePath(productData.image[0])}
                   />
                   <span className="card-title">{productData.name}</span>
                 </div>
@@ -143,6 +143,13 @@ export default class MyProduct extends React.Component<MyProductProps, MyProduct
                     >
                       HAPUS
                     </a>
+                    <Link
+                      href={{ pathname: '/editProduct', query: { productId: productData._id } }}
+                      as={`/product/${productData._id}/edit`}
+                      prefetch
+                    >
+                      <a href="#">Edit</a>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -7,6 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from '../layout/Navbar';
+import { getProductDetailApi } from '../client/services/product';
+
 import '../styles/common.scss';
 import {
   fetchProductTypeState,
@@ -15,7 +17,7 @@ import {
 } from '../client/ducks/productType';
 import redirectToLogin from '../client/helpers/redirectToLogin';
 import MimeHelper from '../client/helpers/mime';
-import { createProductApi } from '../client/services/product';
+import { editProductApi } from '../client/services/product';
 import Loading from '../layout/Loading';
 
 type CreateProductProps = {
@@ -40,43 +42,32 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
   static async getInitialProps({
     store, isServer, pathname, query, res,
   }, token) {
-    if (!token) {
-      redirectToLogin(isServer, res);
-      return;
-    }
+    // if (!token) {
+    //   redirectToLogin(isServer, res);
+    //   return;
+    // }
+    const { productId } = query;
     await store.dispatch(fetchProductTypeState(token));
+    const productResponse = await getProductDetailApi(token, productId);
+    const { data } = productResponse;
+    return { productInfo: data || {} };
   }
 
   constructor(props) {
     super(props);
+    const { productInfo } = props;
     this.state = {
-      productName: '',
-      productTypeId: '',
-      productStock: null,
-      productStockUnitName: '',
-      productPriceUnitName: '',
-      productPrice: null,
-      productImage: [null],
-      productDescription: '',
+      productName: productInfo.name,
+      productStock: productInfo.stock,
+      productStockUnitName: productInfo.stock_unit_name,
+      productPriceUnitName: productInfo.price_unit_name,
+      productPrice: productInfo.price,
+      productDescription: productInfo.description,
     };
   }
 
   componentWillMount() {
     const { token, fetchProductType } = this.props;
-    fetchProductType(token);
-  }
-
-  onAddImage(e) {
-    e.preventDefault();
-    const { productImage } = this.state;
-    const newProductImage = [...productImage, null];
-    this.setState({ productImage: newProductImage });
-  }
-
-  onProductImageAdd(e, index) {
-    const { productImage } = this.state;
-    productImage[index] = e.currentTarget.files[0];
-    this.setState({ productImage });
   }
 
   onSubmit(e) {
@@ -90,7 +81,7 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
       });
       return;
     }
-    const { token } = this.props;
+    const { token, productInfo } = this.props;
     const {
       productDescription,
       productImage,
@@ -99,18 +90,16 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
       productPriceUnitName,
       productStockUnitName,
       productStock,
-      productTypeId,
     } = this.state;
-    createProductApi(
+    editProductApi(
       token,
-      productTypeId,
+      productInfo._id,
       productName,
       productPrice,
       productPriceUnitName,
       productStockUnitName,
       productStock,
       productDescription,
-      productImage,
     ).then((response) => {
       if (response.error) {
         toast(response.message, {
@@ -140,36 +129,19 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
         validationError.message = 'Semua Form Harus Terisi';
       }
     });
-    if (productImage.length === 0) {
-      validationError.isError = true;
-      validationError.message = 'Gambar Produk tidak boleh kosong';
-    }
-    for (let i = 0; i < productImage.length; i += 1) {
-      if (productImage[i] === null) {
-        
-      }
-      else if (productImage[i] && !MimeHelper.isImage(productImage[i].type)) {
-        validationError.isError = true;
-        validationError.message = 'Gambar Produk hanya support file gambar';
-      }
-    }
     return validationError;
   }
 
   render() {
-    const { productTypeList, token, productTypeLoading } = this.props;
-    if (productTypeLoading) {
-      return <Loading isVisible />;
-    }
+    const { token  } = this.props;
+
     const {
       productDescription,
-      productImage,
       productName,
       productPrice,
       productStock,
       productPriceUnitName,
       productStockUnitName,
-      productTypeId,
     } = this.state;
     return (
       <div>
@@ -187,26 +159,6 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
               />
               <label htmlFor="nama_produk">Nama Produk</label>
               <span className="helper-text">Nama Produk yang ingin anda jual</span>
-            </div>
-          </div>
-          <div className="row">
-            <div className="input-field col s12">
-              <i className="material-icons prefix">domain</i>
-              <select
-                id="jenis_produk"
-                onChange={e => this.setState({ productTypeId: e.currentTarget.value })}
-                value={productTypeId}
-              >
-                <option value="" disabled selected>
-                  Pilih Jenis Produk
-                </option>
-                {productTypeList.map(productTypeData => (
-                  <option key={productTypeData._id} value={productTypeData._id}>
-                    {productTypeData.name}
-                  </option>
-                ))}
-              </select>
-              <span className="helper-text">Jenis produk</span>
             </div>
           </div>
           <div className="row">
@@ -260,28 +212,6 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
               <span className="helper-text">Jenis Satuan Harga</span>
             </div>
           </div>
-          {productImage.map((imageItme, index) => (
-            <div className="row">
-              <div className="file-field input-field col s12">
-                <div className="btn">
-                  <span>File</span>
-                  <input type="file" onChange={e => this.onProductImageAdd(e, index)} />
-                </div>
-                <div className="file-path-wrapper">
-                  <input className="file-path validate" type="text" id="gambar_produk" />
-                  <label htmlFor="gambar_produk">Gambar Produk</label>
-                </div>
-              </div>
-            </div>
-          ))}
-          <div className="row text-center container">
-            <button
-              onClick={e => this.onAddImage(e)}
-              className="waves-effect waves-light btn col s6 m-5 offset-s3"
-            >
-              Tambah Gambar
-            </button>
-          </div>
           <div className="row">
             <div className="input-field col s12">
               <i className="prefix material-icons">title</i>
@@ -298,7 +228,7 @@ class CreateProduct extends React.Component<CreateProductProps, CreateProductSta
           </div>
           <div className="row mb5 mt3">
             <button type="submit" className="waves-effect waves-light btn col s12 m-5">
-              Tambahkan ke Produk
+              Edit Produk
             </button>
           </div>
         </form>

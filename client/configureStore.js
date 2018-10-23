@@ -4,7 +4,7 @@ import { applyMiddleware, createStore } from 'redux';
 
 import reducers from './ducks';
 
-const makeConfiguredStore = (reducers, initialState) => createStore(reducers, initialState, applyMiddleware(logger, thunk));
+const makeConfiguredStore = (reducers, initialState) => createStore(reducers, initialState, applyMiddleware(thunk));
 
 export default (initialState, {
   isServer, req, debug, storeKey,

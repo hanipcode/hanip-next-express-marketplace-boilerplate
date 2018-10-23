@@ -24,11 +24,12 @@ export default class productDetail extends React.Component {
 
   state = {
     isImageOpen: false,
+    lightBoxIndex: 0
   };
 
   render() {
     const { productInfo, token } = this.props;
-    const { isImageOpen } = this.state;
+    const { isImageOpen, lightBoxIndex } = this.state;
     return (
       <div>
         <Navbar isLoggedIn={token} />
@@ -53,28 +54,35 @@ export default class productDetail extends React.Component {
                 </p>
               </Link>
               <img
-                src={buildImagePath(productInfo.image)}
+                src={buildImagePath(productInfo.image[0])}
                 className="img-responsive product-image mt3"
                 onClick={() => this.setState({ isImageOpen: true })}
               />
               <p className="center-align">
-                <a onClick={() => this.setState({ isImageOpen: true })}>Lihat Detail Gambar</a>
+                <a onClick={() => this.setState({ isImageOpen: true })}>Lihat Galeri Produk</a>
               </p>
               <Lightbox
-                images={[
-                  {
-                    src: buildImagePath(productInfo.image).replace(
-                      '/product_thumbnail/',
-                      '/product_images/',
-                    ),
-                  },
-                ]}
+                images={productInfo.image.map(imageData => ({
+                  src: buildImagePath(imageData).replace(
+                    '/product_thumbnail/',
+                    '/product_images/',
+                  ),
+                }))}
                 isOpen={isImageOpen}
+                onClickNext={() => this.setState({ lightBoxIndex: lightBoxIndex + 1})}
+                onClickPrev={() => this.setState({ lightBoxIndex: lightBoxIndex - 1})}
+                currentImage={lightBoxIndex}
                 onClose={() => this.setState({ isImageOpen: false })}
                 backdropClosesModal
               />
               <h4>{productInfo.name}</h4>
-              <h6>{accounting.formatMoney(productInfo.price, 'Rp ', 2, '.', ',')} per {productInfo.price_unit_name}</h6>
+              <h6>
+                {accounting.formatMoney(productInfo.price, 'Rp ', 2, '.', ',')}
+                {' '}
+per
+                {' '}
+                {productInfo.price_unit_name}
+              </h6>
               <h6 className="mt4">Deskripsi Produk</h6>
               <p className="row">
                 <span className="col">{productInfo.description}</span>
@@ -85,7 +93,11 @@ export default class productDetail extends React.Component {
               </p>
               <h6>Stok Produk</h6>
               <p className="row">
-                <span className="col">{productInfo.stock} {productInfo.stock_unit_name}</span>
+                <span className="col">
+                  {productInfo.stock}
+                  {' '}
+                  {productInfo.stock_unit_name}
+                </span>
               </p>
               <h6>Informasi Penjual</h6>
               <p className="row">
