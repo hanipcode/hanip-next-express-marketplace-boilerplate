@@ -7,3 +7,4 @@ TODOS
 **/product_thumbnail/**
 **/product_images/**
 .DS_Store
+*.log
