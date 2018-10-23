@@ -75,7 +75,7 @@ class Home extends React.Component<null, HomeState> {
           </div>
         )}
         <div className="row mt4">
-          <div className="nav-wrapper">
+          {/* <div className="nav-wrapper">
             <form className="center-align">
               <div className="input-field">
                 <input
@@ -98,7 +98,7 @@ class Home extends React.Component<null, HomeState> {
                 </button>
               )}
             </form>
-          </div>
+          </div> */}
           {productList.map(productData => (
             <div className="col s6 mt3">
               <Link
