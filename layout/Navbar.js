@@ -20,7 +20,7 @@ export default ({
     <nav>
       <div className="nav-wrapper green fixed">
         <a href="#!" className="brand-logo center">
-          Logo
+          <img src="/static/public/images/logo.png" style={{ height: 30, resize: 'both' }} />
         </a>
         {isLoggedIn && (
           <a role="button" data-target="mobile-demo" className="sidenav-trigger">
